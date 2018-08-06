@@ -4,7 +4,6 @@ import java.util.*;
 public class graph{
    boolean adjMatrix[][] = new boolean[7][7];
    public void graphCreation(){
-      //System.out.println(adjMatrix[0][0]);
       int[] temp = {1,2,4};
    
       for(int i = 0; i < 7;i++){
@@ -26,70 +25,65 @@ public class graph{
          }
          temp = new int[0];
       }
-      /*for (boolean a:adjMatrix[4]){
-         System.out.print(a);
-      }*/
    }
    static Stack<Integer> open = new Stack<Integer>();
-   ArrayList<Integer> closed = new ArrayList<Integer>();
+   static ArrayList<Integer> closed = new ArrayList<Integer>();
+   static Queue<Integer> openBF = new LinkedList<>();
    
-   public int DFS(int goal, int b){
-      //for (int i = b; i < 7;i++){
-         if (b == goal){
-               return b;
-         }
-         else{
-            //for (boolean x:adjMatrix[i]){
-            for (int j = 0; j < 7;j++){
-               if (adjMatrix[b][j]){
-                  open.push(DFS(goal,j));
-                  //DFS(goal,j);
-                  open.pop();
+   public void DFS(int goal, int b){
+      if (b != goal){
+         open.push(b);
+      }//for (boolean x:adjMatrix[i]){
+      for (int j = 0; j < 7;j++){
+         if (adjMatrix[b][j]){
+            if (!(closed.contains(j))){
+               if (j == goal){
+                  open.push(j);
+                  break;
                }
+               DFS(goal,j);
+               if (open.peek() == goal)
+                  break; //outerloop;
+               closed.add(open.pop());
+               
             }
-            closed.add(b);
          }
-      //}
-      //open.pop();
-      return b;
+      }
    }
    
-   public void DFS(int goal){
-      /*if (goal == 0){
-         int[] a = {0};
-         return a;
+   public void BFS(int goal, int x){
+      for (int i = 0;i < 7;i++){
+         if (adjMatrix[x][i]){
+            if (i == goal){
+               open.push(i);
+               open.push(x);
+               break;
+            }
+            if (!(closed.contains(i)))
+               openBF.add(i);
+            
+         }
       }
+      closed.add(x);
+      if (open.empty())
+         BFS(goal,openBF.remove());
       else{
-         closed.add(0);
-      }*/
-      graphCreation();
-      open.push(0);
-      for (int i = 0; i < 7;i++){
-         /*if (i == goal){
-            closed.add(open.pop());
-            return i;
-         }
-         else{*/
-            //closed.add(i);
-            //for (boolean x:adjMatrix[i]){
-            for (int j = 0; j < 7;j++){
-               if (adjMatrix[i][j]){
-                  //if (goal != j){
-                     open.push(j);
-                     DFS(goal,j);
-                     //open.pop();
-                  //}
+         while (open.peek() != 0){
+            for (int i = x; i >= 0;--i){
+               if (adjMatrix[i][x]){
+                  open.push(i);
                }
             }
-         //}
-      }
-      
+         }
+      }      
    }
+   
    public static void main(String args[]){
       graph prac1 = new graph();
-      prac1.DFS(6);
+      prac1.graphCreation();
+      prac1.BFS(6,0);
       while (!(prac1.open.empty())){
-         prac1.open.pop();
+         System.out.println(prac1.open.pop());
       }
    }
 }
